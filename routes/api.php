@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HerdController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\RuralProducerController;
 use App\Http\Controllers\SpecieController;
@@ -12,7 +13,7 @@ Route::get('/health-check', function () {
 Route::apiResources([
     'rural_producers' => RuralProducerController::class,
     'properties' => PropertyController::class,
-    // 'herds' => App\Http\Controllers\HerdController::class,
+    'herds' => HerdController::class,
 ]);
 
 Route::get('species', [SpecieController::class, 'index']);

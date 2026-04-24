@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Models\Property;
 
+/**
+ * Service class for managing properties.
+ */
 class PropertyService
 {
     /**
