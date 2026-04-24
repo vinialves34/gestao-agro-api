@@ -35,7 +35,7 @@ class Herd extends Model
      */
     public function property(): BelongsTo
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsTo(Property::class, 'property_id');
     }
 
     /**
@@ -43,6 +43,6 @@ class Herd extends Model
      */
     public function species(): BelongsTo
     {
-        return $this->belongsTo(Specie::class);
+        return $this->belongsTo(Specie::class, 'species_id');
     }
 }

@@ -26,7 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     return response()->json([
                         'success' => false,
                         'message' => 'Resource not found',
-                        'status_code' => 404
+                        'status_code' => 404,
+                        'error' => $e->getMessage()
                     ], 404);
                 }
 
@@ -42,7 +43,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'success' => false,
                     'message' => 'Internal server error',
-                    'status_code' => 500
+                    'status_code' => 500,
+                    'error' => $e->getMessage()
                 ], 500);
             }
         });

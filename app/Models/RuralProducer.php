@@ -19,6 +19,11 @@ class RuralProducer extends Model
         'address',
     ];
 
+    /**
+     * The attributes that are allowed for filtering.
+     *
+     * @var array<int, string>
+     */
     protected $allowedFilters = [
         'name',
         'cpf_cnpj',

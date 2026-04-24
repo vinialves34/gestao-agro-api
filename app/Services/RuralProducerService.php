@@ -34,7 +34,7 @@ class RuralProducerService
         $query = RuralProducer::query();
 
         $query->when($filters['name'] ?? null, fn($q, $name) =>
-            $q->where('name', 'ilike', "%$name%")
+            $q->whereRaw('unaccent(name) ilike unaccent(?)', ["%$name%"])
         )
         ->when($filters['cpf_cnpj'] ?? null, fn($q, $cpfCnpj) =>
             $q->where('cpf_cnpj', 'like', "%$cpfCnpj%")

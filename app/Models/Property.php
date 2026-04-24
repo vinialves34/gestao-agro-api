@@ -32,11 +32,23 @@ class Property extends Model
     ];
 
     /**
+     * The attributes that are allowed for filtering.
+     *
+     * @var array<int, string>
+     */
+    protected $allowedFilters = [
+        'name',
+        'city',
+        'state',
+        'state_registration',
+    ];
+
+    /**
      * Get the rural producer that owns the property.
      */
-    public function producer(): BelongsTo
+    public function ruralProducer(): BelongsTo
     {
-        return $this->belongsTo(RuralProducer::class);
+        return $this->belongsTo(RuralProducer::class, 'producer_id');
     }
 
     /**
