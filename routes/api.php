@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HerdController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RuralProducerController;
 use App\Http\Controllers\SpecieController;
 use Illuminate\Support\Facades\Route;
@@ -11,10 +12,17 @@ Route::get('/health-check', function () {
 });
 
 Route::apiResources([
-    'rural_producers' => RuralProducerController::class,
+    'rural-producers' => RuralProducerController::class,
     'properties' => PropertyController::class,
     'herds' => HerdController::class,
 ]);
 
-Route::get('species', [SpecieController::class, 'index']);
-Route::get('species/{specie}', [SpecieController::class, 'show']);
+Route::prefix('species')->group(function () {
+    Route::get('/', [SpecieController::class, 'index']);
+    Route::get('/{specie}', [SpecieController::class, 'show']);
+});
+
+Route::prefix('report/total')->group(function () {
+    Route::get('properties-by-city', [ReportController::class, 'reportTotalPropertiesByCity']);
+    Route::get('herds-by-specie', [ReportController::class, 'reportTotalHerdsBySpecie']);
+});
