@@ -1,58 +1,267 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Gestão Agrícola API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST para gerenciamento de produtores rurais, propriedades, espécies e rebanhos.
 
-## About Laravel
+## 📋 Descrição do Projeto
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sistema de gestão agrícola desenvolvido com Laravel que permite o cadastro e monitoramento de:
+- **Produtores Rurais**: Gestão de informações de produtores (CPF/CNPJ, contato, endereço)
+- **Propriedades**: Cadastro de propriedades rurais vinculadas a produtores
+- **Espécies**: Registro de espécies de animais criados
+- **Rebanhos**: Acompanhamento de rebanhos com quantidade e finalidade
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tecnologias Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework**: Laravel 13
+- **Banco de Dados**: Postgres
+- **Container**: Docker & Docker Compose
 
-## Learning Laravel
+## 📦 Pré-requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Docker e Docker Compose
+- PHP 8.3+
+- Composer
+- Node.js e npm
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Instalação e Configuração
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 1. Clone o Repositório
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/vinialves34/gestao-agro-api
+cd gestao-agro-api
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Instale as Dependências
+```bash
+composer install
+npm install
+```
 
-## Contributing
+### 3. Configure o Ambiente
+```bash
+cp .env.example .env
+php artisan key:generate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#IMPORTANTE: Configurar variáveis de ambiente do banco de dados no .env antes de rodar o comando docker-compose
+```
 
-## Code of Conduct
+### 4. Inicie os Containers Docker
+```bash
+docker-compose up -d --build
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 5. Execute as Migrações
+```bash
+#ATENÇÃO: Todos comandos de execução ao banco de dados tem que ser executado dentro do container.
+#Então acesse o container:
+docker exec -it gestao_agro_api bash
 
-## Security Vulnerabilities
+#Então no terminal do container execute as migrations.
+php artisan migrate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 6. Populate o Banco de Dados
+```bash
+#ATENÇÃO: Todos comandos de execução ao banco de dados tem que ser executado dentro do container.
+#Então acesse o container:
+docker exec -it gestao_agro_api bash
 
-## License
+#Então no terminal do container execute a seed para a tabela de espécies.
+php artisan db:seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📊 Estrutura do Banco de Dados
+
+### Tabelas Principais
+
+#### `rural_producers` - Produtores Rurais
+- `id` (bigint, PK)
+- `name` (string) - Nome do produtor
+- `cpf_cnpj` (string, unique) - CPF ou CNPJ
+- `phone` (string) - Telefone
+- `email` (string, unique) - Email
+- `address` (string) - Endereço
+- `timestamps`
+
+#### `properties` - Propriedades Rurais
+- `id` (bigint, PK)
+- `producer_id` (int, FK) - Referência ao produtor
+- `name` (string) - Nome da propriedade
+- `city` (string) - Cidade
+- `state` (string) - Estado
+- `state_registration` (string) - Inscrição estadual
+- `total_area` (string) - Área total
+- `timestamps`
+
+#### `species` - Espécies
+- `id` (bigint, PK)
+- `name` (string) - Nome da espécie
+- `timestamps`
+
+#### `herds` - Rebanhos
+- `id` (bigint, PK)
+- `property_id` (int, FK) - Referência à propriedade
+- `species_id` (int, FK) - Referência à espécie
+- `quantity` (int) - Quantidade de animais
+- `purpose` (string) - Finalidade (ex: leite, carne, reprodução)
+- `timestamps`
+
+## 🔗 Relacionamentos
+
+```
+RuralProducer (1) ------ (N) Property
+                 \
+                  \------- (N) Herd
+                           /
+Species (1) ----------- (N)
+```
+
+## 📝 Modelos Eloquent
+
+### RuralProducer
+```php
+$producer = RuralProducer::find(1);
+$properties = $producer->properties;
+```
+
+### Property
+```php
+$property = Property::find(1);
+$producer = $property->producer;
+$herds = $property->herds;
+```
+
+### Species
+```php
+$species = Species::find(1);
+$herds = $species->herds;
+```
+
+### Herd
+```php
+$herd = Herd::find(1);
+$property = $herd->property;
+$species = $herd->species;
+```
+
+## 🔌 Endpoints da API
+
+### Produtores Rurais
+```
+GET    /api/rural-producers          - Listar todos
+POST   /api/rural-producers          - Criar novo
+GET    /api/rural-producers/{id}     - Detalhes
+PUT    /api/rural-producers/{id}     - Atualizar
+DELETE /api/rural-producers/{id}     - Deletar
+```
+
+### Propriedades
+```
+GET    /api/properties               - Listar todas
+POST   /api/properties               - Criar nova
+GET    /api/properties/{id}          - Detalhes
+PUT    /api/properties/{id}          - Atualizar
+DELETE /api/properties/{id}          - Deletar
+```
+
+### Espécies
+```
+GET    /api/species                  - Listar todas
+POST   /api/species                  - Criar nova
+GET    /api/species/{id}             - Detalhes
+PUT    /api/species/{id}             - Atualizar
+DELETE /api/species/{id}             - Deletar
+```
+
+### Rebanhos
+```
+GET    /api/herds                    - Listar todos
+POST   /api/herds                    - Criar novo
+GET    /api/herds/{id}               - Detalhes
+PUT    /api/herds/{id}               - Atualizar
+DELETE /api/herds/{id}               - Deletar
+```
+
+### Relatórios
+```
+GET    /api/report/total/properties-by-city     - Lista o total de proriedades por municípios
+GET    /api/report/total/herds-by-specie        - Lista o tatal de rebanhos por espécies
+```
+
+## 📚 Comandos Úteis
+
+```bash
+# Executar migrações
+php artisan migrate
+
+# Reverter última migração
+php artisan migrate:rollback
+
+# Resetar banco de dados
+php artisan migrate:fresh
+
+# Abrir Tinker (shell do Laravel)
+php artisan tinker
+
+# Limpar caches
+php artisan cache:clear
+php artisan config:clear
+
+# Build assets para produção
+npm run build
+
+# Desenvolvimento com Vite
+npm run dev
+```
+
+## 📖 Estrutura de Diretórios
+
+```
+app/
+├── Http/
+│   └── Controllers/
+├── Models/
+│   ├── RuralProducer.php
+│   ├── Property.php
+│   ├── Species.php
+│   └── Herd.php
+└── Providers/
+
+database/
+├── migrations/
+├── factories/
+└── seeders/
+
+routes/
+├── api.php
+└── web.php
+
+tests/
+├── Feature/
+└── Unit/
+
+resources/
+├── css/
+├── js/
+└── views/
+```
+
+## 🐛 Troubleshooting
+
+### Erro de conexão com banco de dados
+Verifique se o container Docker está rodando:
+```bash
+docker-compose ps
+```
+
+### Erro de permissão em storage/logs
+```bash
+chmod -R 777 storage bootstrap/cache
+```
+
+### Limpar cache de aplicação
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+```
