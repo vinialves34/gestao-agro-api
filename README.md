@@ -185,7 +185,7 @@ DELETE /api/herds/{id}               - Deletar
 ### Relatórios
 ```
 GET    /api/report/total/properties-by-city     - Lista o total de proriedades por municípios
-GET    /api/report/total/herds-by-specie        - Lista o tatal de rebanhos por espécies
+GET    /api/report/total/herds-by-specie        - Lista o total de rebanhos por espécies
 ```
 
 ## 📚 Comandos Úteis
