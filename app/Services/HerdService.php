@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Herd;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 /**
  * Service class for managing herds.
@@ -94,5 +95,23 @@ class HerdService
     public function delete(Herd $herd)
     {
         return $herd->delete();
+    }
+
+    /**
+     * Download report herds
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadReport()
+    {
+        $herds = Herd::with(['property.ruralProducer', 'species'])
+            ->get()
+            ->groupBy(fn ($herd) => $herd->property->ruralProducer->name);
+
+        $pdf = Pdf::loadView('reports.herds_by_producer', [
+            'herds' => $herds
+        ]);
+
+        return $pdf->download('rebanhos_por_produtor.pdf');
     }
 }

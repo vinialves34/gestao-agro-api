@@ -30,5 +30,6 @@ Route::prefix('report')->group(function () {
 
     Route::prefix('/download')->group(function () {
         Route::get('/properties', [PropertyController::class, 'exportProperties']);
+        Route::get('/herds', [HerdController::class, 'exportHerds']);
     });
 });

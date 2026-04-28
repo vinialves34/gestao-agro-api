@@ -93,4 +93,15 @@ class HerdController extends Controller
             return $this->error('Failed to delete herd', $e->getCode() ?: 500, ['message' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Download report herds
+     *
+     * @param HerdService $service
+     * @return \Illuminate\Http\Response
+     */
+    public function exportHerds(HerdService $service)
+    {
+        return $service->downloadReport();
+    }
 }
