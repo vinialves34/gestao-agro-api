@@ -24,7 +24,7 @@ class PropertyController extends Controller
     {
         try {
             $properties = $service->list($request->query());
-            return $this->paginated($properties, 'Properties retrieved successfully');
+            return $this->success($properties, "Properties retrieved successfully", 200);
         } catch (\Exception $e) {
             return $this->error('Failed to list properties', $e->getCode() ?: 500, ['message' => $e->getMessage()]);
         }

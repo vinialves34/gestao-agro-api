@@ -17,7 +17,8 @@ class PropertyService
      */
     public function create(array $data)
     {
-        $data['city'] = trim(mb_strtoupper($data['city'], 'UTF-8'));
+        $data['city'] = trim($data['city']);
+        $data['state'] = trim($data['state']);
 
         return Property::create($data);
     }
@@ -26,7 +27,7 @@ class PropertyService
      * List properties with optional filters.
      *
      * @param array $filters
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|Property
      */
     public function list(array $filters)
     {
@@ -43,11 +44,22 @@ class PropertyService
         )
         ->when($filters['state_registration'] ?? null, fn($q, $stateRegistration) =>
             $q->where('state_registration', 'like', "%$stateRegistration%")
+        )
+        ->when($filters['total_area'] ?? null, fn($q, $totalArea) =>
+            $q->where('total_area', $totalArea)
+        )
+        ->when($filters['rural_producer_name'] ?? null, fn($q, $ruralProducerName) =>
+            $q->whereHas('ruralProducer', function($rel) use ($ruralProducerName) {
+                $rel->whereRaw('unaccent(name) ilike unaccent(?)', ["%$ruralProducerName%"]);
+            })
         );
 
-        $perPage = $filters['limit'] ?? 10;
+        if (isset($filters['paginate']) && !!$filters['paginate']) {
+            $perPage = $filters['perPage'] ?? 10;
+            return $query->paginate($perPage);
+        }
 
-        return $query->paginate($perPage);
+        return $query->get();
     }
 
     /**
@@ -71,7 +83,11 @@ class PropertyService
     public function update(Property $property, array $data)
     {
         if (isset($data['city'])) {
-            $data['city'] = trim(mb_strtoupper($data['city'], 'UTF-8'));
+            $data['city'] = trim($data['city']);
+        }
+
+        if (isset($data['state'])) {
+            $data['state'] = trim($data['state']);
         }
 
         $property->update($data);

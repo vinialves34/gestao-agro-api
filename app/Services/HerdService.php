@@ -25,7 +25,7 @@ class HerdService
      * List herds with optional filters.
      *
      * @param array $filters
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|Herd
      */
     public function list(array $filters)
     {
@@ -34,19 +34,26 @@ class HerdService
         $query->when($filters['purpose'] ?? null, fn($q, $purpose) =>
             $q->whereRaw('unaccent(purpose) ilike unaccent(?)', ["%$purpose%"])
         )
-        ->when($filters['property_id'] ?? null, fn($q, $propertyId) =>
-            $q->where('property_id', $propertyId)
-        )
-        ->when($filters['species_id'] ?? null, fn($q, $speciesId) =>
-            $q->where('species_id', $speciesId)
-        )
         ->when($filters['quantity'] ?? null, fn($q, $quantity) =>
             $q->where('quantity', $quantity)
+        )
+        ->when($filters['property_name'] ?? null, fn($q, $propertyName) =>
+            $q->whereHas('property', function($rel) use ($propertyName) {
+                $rel->whereRaw('unaccent(name) ilike unaccent(?)', ["%$propertyName%"]);
+            })
+        )
+        ->when($filters['specie_name'] ?? null, fn($q, $specieName) =>
+            $q->whereHas('species', function($rel) use ($specieName) {
+                $rel->whereRaw('unaccent(name) ilike unaccent(?)', ["%$specieName%"]);
+            })
         );
 
-        $perPage = $filters['limit'] ?? 10;
+        if (isset($filters['paginate']) && !!$filters['paginate']) {
+            $perPage = $filters['perPage'] ?? 10;
+            return $query->paginate($perPage);
+        }
 
-        return $query->paginate($perPage);
+        return $query->get();
     }
 
     /**

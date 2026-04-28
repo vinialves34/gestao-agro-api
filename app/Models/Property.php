@@ -41,6 +41,7 @@ class Property extends Model
         'city',
         'state',
         'state_registration',
+        'total_area',
     ];
 
     /**

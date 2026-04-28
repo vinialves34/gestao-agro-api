@@ -20,7 +20,7 @@ class HerdController extends Controller
     {
         try {
             $herds = $service->list($request->query());
-            return $this->paginated($herds, 'Herds retrieved successfully');
+            return $this->success($herds, 'Herds retrieved successfully', 200);
         } catch (\Exception $e) {
             return $this->error('Failed to list herds', $e->getCode() ?: 500, ['message' => $e->getMessage()]);
         }

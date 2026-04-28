@@ -24,7 +24,7 @@ class RuralProducerController extends Controller
     {
         try {
             $ruralProducers = $service->list($request->query());
-            return $this->paginated($ruralProducers, 'Rural producers retrieved successfully');
+            return $this->success($ruralProducers, 'Rural producers retrieved successfully', 200);
         } catch (\Exception $e) {
             return $this->error('Failed to list rural producers', $e->getCode() ?: 500, ['message' => $e->getMessage()]);
         }

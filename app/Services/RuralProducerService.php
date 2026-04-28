@@ -27,7 +27,7 @@ class RuralProducerService
      * List rural producers with optional filters.
      *
      * @param array $filters
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|RuralProducer
      */
     public function list(array $filters)
     {
@@ -44,11 +44,17 @@ class RuralProducerService
         )
         ->when($filters['email'] ?? null, fn($q, $email) =>
             $q->where('email', 'ilike', "%$email%")
+        )
+        ->when($filters['address'] ?? null, fn($q, $address) =>
+            $q->where('address', 'ilike', "%$address%")
         );
 
-        $perPage = $filters['limit'] ?? 10;
+        if (isset($filters['paginate']) && !!$filters['paginate']) {
+            $perPage = $filters['perPage'] ?? 10;
+            return $query->paginate($perPage);
+        }
 
-        return $query->paginate($perPage);
+        return $query->get();
     }
 
     /**
