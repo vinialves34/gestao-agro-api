@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PropertiesExport;
 use App\Http\Requests\PropertyRequests\StorePropertyRequest;
 use App\Http\Requests\PropertyRequests\UpdatePropertyRequest;
 use App\Models\Property;
 use App\Services\PropertyService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel as ExcelService;
 
 class PropertyController extends Controller
 {
@@ -96,5 +98,15 @@ class PropertyController extends Controller
         } catch (\Exception $e) {
             return $this->error('Failed to delete property', $e->getCode() ?: 500, ['message' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Export property report
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function exportProperties(ExcelService $service)
+    {
+        return $service->download(new PropertiesExport, 'relatorio_propriedades.xlsx');
     }
 }

@@ -22,7 +22,13 @@ Route::prefix('species')->group(function () {
     Route::get('/{specie}', [SpecieController::class, 'show']);
 });
 
-Route::prefix('report/total')->group(function () {
-    Route::get('properties-by-city', [ReportController::class, 'reportTotalPropertiesByCity']);
-    Route::get('herds-by-specie', [ReportController::class, 'reportTotalHerdsBySpecie']);
+Route::prefix('report')->group(function () {
+    Route::prefix('/total')->group(function () {
+        Route::get('properties-by-city', [ReportController::class, 'reportTotalPropertiesByCity']);
+        Route::get('herds-by-specie', [ReportController::class, 'reportTotalHerdsBySpecie']);
+    });
+
+    Route::prefix('/download')->group(function () {
+        Route::get('/properties', [PropertyController::class, 'exportProperties']);
+    });
 });
